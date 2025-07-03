@@ -20,13 +20,81 @@
 
 ### 🔍 快速导航
 
-=== "新生必看" - [学校概况](school/overview.md) - 了解北理工的基本情况 - [良乡校区](school/liangxiang.md) - 主要生活学习场所 - [入学准备](appendix/preparation.md) - 开学前必备准备 - [北理黑话](appendix/slang.md) - 融入校园文化必备
+=== "🎒 新生必看"
 
-=== "生活指南" - [食堂美食](school/dining.md) - 吃遍北理美食 - [宿舍环境](school/dormitory.md) - 住宿生活攻略 - [教学设施](school/buildings.md) - 教学楼使用指南 - [其他设施](school/facilities.md) - 图书馆、体育馆等
+    <div class="grid cards" markdown>
 
-=== "活动参与" - [校园活动](activities/events.md) - 丰富多彩的校园活动 - [学生组织](activities/organizations.md) - 锻炼能力的好去处 - [学生社团](activities/clubs.md) - 结交志同道合的朋友
+    - **🏫 [学校概况](school/overview.md)**
 
-=== "学习提升" - [奖项标准](study/awards.md) - 各类奖学金评选标准 - [竞赛比赛](study/competitions.md) - 提升能力的竞赛平台
+        了解北理工的基本情况和历史沿革
+
+    - **🏠 [良乡校区](school/liangxiang.md)**
+
+        主要生活学习场所介绍
+
+    - **📦 [入学准备](appendix/preparation.md)**
+
+        开学前必备物品和注意事项
+
+    - **💬 [北理黑话](appendix/slang.md)**
+
+        融入校园文化必备词汇
+
+    </div>
+
+=== "🏠 生活指南"
+
+    <div class="grid cards" markdown>
+
+    - **🍽️ [食堂美食](school/dining.md)**
+
+        吃遍北理各大食堂美食攻略
+
+    - **🛏️ [宿舍环境](school/dormitory.md)**
+
+        住宿生活全方位指南
+
+    - **🏛️ [教学设施](school/buildings.md)**
+
+        各教学楼详细使用指南
+
+    - **🏃 [其他设施](school/facilities.md)**
+
+        图书馆、体育馆等配套设施
+
+    </div>
+
+=== "🎭 活动参与"
+
+    <div class="grid cards" markdown>
+
+    - **🎉 [校园活动](activities/events.md)**
+
+        丰富多彩的校园文化活动
+
+    - **👥 [学生组织](activities/organizations.md)**
+
+        锻炼能力的学生组织平台
+
+    - **🤝 [学生社团](activities/clubs.md)**
+
+        结交志同道合朋友的好去处
+
+    </div>
+
+=== "📚 学习提升"
+
+    <div class="grid cards" markdown>
+
+    - **🏆 [奖项标准](study/awards.md)**
+
+        各类奖学金评选标准详解
+
+    - **🥇 [竞赛比赛](study/competitions.md)**
+
+        提升能力的各类竞赛平台
+
+    </div>
 
 ## ❓ 常见问题
 
