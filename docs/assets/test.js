@@ -1,5 +1,3 @@
-<script>
-
 // 点击生成小碎花效果（修复版）
 document.addEventListener('DOMContentLoaded', () => {
   // 定义小碎花的SVG路径
@@ -55,5 +53,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });    
-   
-</script>
