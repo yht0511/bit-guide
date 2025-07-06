@@ -1,0 +1,21 @@
+.flower {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 1000;
+  transform-origin: center;
+}
+
+@keyframes explode {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--end-x), var(--end-y)) scale(0.5) rotate(var(--rotate));
+    opacity: 0;
+  }
+}    
