@@ -1,3 +1,42 @@
+// MathJax 配置 - 支持 LaTeX 数学公式
+window.MathJax = {
+  tex: {
+    inlineMath: [
+      ["$", "$"],
+      ["\\(", "\\)"],
+    ],
+    displayMath: [
+      ["$$", "$$"],
+      ["\\[", "\\]"],
+    ],
+    processEscapes: true,
+    processEnvironments: true,
+    tags: "ams",
+    macros: {
+      // 常用数学宏定义
+      R: "\\mathbb{R}",
+      Q: "\\mathbb{Q}",
+      N: "\\mathbb{N}",
+      Z: "\\mathbb{Z}",
+      C: "\\mathbb{C}",
+      eps: "\\varepsilon",
+      phi: "\\varphi",
+      implies: "\\Rightarrow",
+      iff: "\\Leftrightarrow",
+    },
+  },
+  svg: {
+    fontCache: "global",
+  },
+  startup: {
+    pageReady() {
+      return MathJax.startup.defaultPageReady().then(function () {
+        console.log("📐 MathJax LaTeX 支持已加载");
+      });
+    },
+  },
+};
+
 // 自定义JavaScript功能
 
 // 页面加载完成后执行
