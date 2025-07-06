@@ -1,7 +1,7 @@
 site_name: 🎓 北理生活指南
 site_description: 北京理工大学学生生活指南
-site_author: 北理工学长学姐们
-site_url: https://bit-guide.github.io
+site_author: 北京理工大学老登们
+site_url: https://yht0511.github.io/bit-guide/
 
 # Repository
 repo_name: yht0511/bit-guide
@@ -143,6 +143,7 @@ nav:
   - 📚 学习竞赛:
       - 奖项标准: study/awards.md
       - 竞赛比赛: study/competitions.md
+      - 程序设计入门指北: study/xcpc_guide.md
   - 📋 附录:
       - 周边设施: appendix/surroundings.md
       - 北理黑话: appendix/slang.md
