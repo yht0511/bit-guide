@@ -119,9 +119,11 @@ extra:
 
 extra_css:
   - assets/extra.css
+  - assets/test.css
 
 extra_javascript:
   - assets/extra.js
+  - assets/test.js
   - https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.10.4/polyfill.min.js
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
