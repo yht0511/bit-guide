@@ -7,8 +7,11 @@ bit-guide：北理生活指南
 项目结构
  
 bit-guide/
+
 ├── .github/workflows/  # GitHub Actions 工作流配置（用于自动化部署）
+
 ├── docs/               # 网页内容文件（包含各类指南文档，支持 LaTeX 语法）
+
 └── mkdocs.yml          # MkDocs 配置文件（定义网站导航、主题及功能设置）
  
  
@@ -42,6 +45,8 @@ mkdocs serve
 在线访问
  
 静态网页在线地址：https://yht0511.github.io/bit-guide/
+
+（目前处于开发阶段，后续会购置一个使用域名）
  
 贡献方式
  
