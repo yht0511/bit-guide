@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const config = {
 		  position: 'bottom-right', // 位置：bottom-right, bottom-left, top-right, top-left
 		  primaryColor: '#165DFF',
-		  bubbleSize: '16', // 图标大小(px)
+		  bubbleSize: '60', // 图标大小(px)
 		  width: '380px',
 		  height: '480px'
 		};
