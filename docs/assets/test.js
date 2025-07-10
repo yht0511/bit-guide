@@ -53,3 +53,239 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });    
+
+
+//添加一个AI助手
+    // AI助手配置
+		const config = {
+		  position: 'bottom-right', // 位置：bottom-right, bottom-left, top-right, top-left
+		  primaryColor: '#165DFF',
+		  bubbleSize: '16', // 图标大小(px)
+		  width: '380px',
+		  height: '480px'
+		};
+		
+		// 创建AI助手
+		function createAIWidget() {
+		  // 创建主容器
+		  const container = document.createElement('div');
+		  container.id = 'ai-widget-container';
+		  container.style.position = 'fixed';
+		  container.style.zIndex = '9999';
+		  
+		  // 设置位置
+		  switch(config.position) {
+		    case 'bottom-right':
+		      container.style.bottom = '24px';
+		      container.style.right = '24px';
+		      break;
+		    case 'bottom-left':
+		      container.style.bottom = '24px';
+		      container.style.left = '24px';
+		      break;
+		    case 'top-right':
+		      container.style.top = '24px';
+		      container.style.right = '24px';
+		      break;
+		    case 'top-left':
+		      container.style.top = '24px';
+		      container.style.left = '24px';
+		      break;
+		  }
+		  
+		  // 创建图标按钮
+		  const toggleButton = document.createElement('button');
+		  toggleButton.id = 'ai-toggle';
+		  toggleButton.className = 'fixed rounded-full shadow-lg flex items-center justify-center transition-all duration-300 focus:outline-none';
+		  toggleButton.style.width = `${config.bubbleSize}px`;
+		  toggleButton.style.height = `${config.bubbleSize}px`;
+		  toggleButton.style.backgroundColor = config.primaryColor;
+		  toggleButton.style.color = 'white';
+		  
+		  // 设置按钮位置
+		  if(config.position.includes('right')) {
+		    toggleButton.style.right = '24px';
+		  } else {
+		    toggleButton.style.left = '24px';
+		  }
+		  
+		  if(config.position.includes('bottom')) {
+		    toggleButton.style.bottom = '24px';
+		  } else {
+		    toggleButton.style.top = '24px';
+		  }
+		  
+		  // 添加图标
+		  const icon = document.createElement('i');
+		  icon.className = 'fa fa-comments-o text-xl';
+		  toggleButton.appendChild(icon);
+		  
+		  // 创建对话框
+		  const chatBox = document.createElement('div');
+		  chatBox.id = 'ai-chat';
+		  chatBox.className = 'bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300';
+		  chatBox.style.width = config.width;
+		  chatBox.style.height = config.height;
+		  chatBox.style.transform = 'translateX(100%)';
+		  chatBox.style.visibility = 'hidden';
+		  chatBox.style.opacity = '0';
+		  
+		  // 设置对话框位置
+		  if(config.position.includes('left')) {
+		    chatBox.style.transform = 'translateX(-100%)';
+		  }
+		  
+		  // 对话框头部
+		  const header = document.createElement('div');
+		  header.className = 'px-4 py-3 flex items-center justify-between';
+		  header.style.backgroundColor = config.primaryColor;
+		  header.style.color = 'white';
+		  
+		  const headerIcon = document.createElement('i');
+		  headerIcon.className = 'fa fa-robot text-xl';
+		  
+		  const headerTitle = document.createElement('h3');
+		  headerTitle.className = 'font-medium ml-2';
+		  headerTitle.textContent = 'AI助手';
+		  
+		  const headerClose = document.createElement('button');
+		  headerClose.id = 'ai-close';
+		  headerClose.className = 'text-white hover:text-gray-200 focus:outline-none';
+		  headerClose.innerHTML = '<i class="fa fa-times"></i>';
+		  
+		  const headerLeft = document.createElement('div');
+		  headerLeft.className = 'flex items-center';
+		  headerLeft.appendChild(headerIcon);
+		  headerLeft.appendChild(headerTitle);
+		  
+		  header.appendChild(headerLeft);
+		  header.appendChild(headerClose);
+		  
+		  // 消息区域
+		  const messages = document.createElement('div');
+		  messages.id = 'ai-messages';
+		  messages.className = 'flex-1 p-4 overflow-y-auto bg-gray-50';
+		  messages.style.overflowY = 'auto';
+		  
+		  // 添加初始消息
+		  const initialMessage = document.createElement('div');
+		  initialMessage.className = 'flex items-start mb-4';
+		  initialMessage.innerHTML = `
+		    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0" style="background-color: ${config.primaryColor}">
+		      <i class="fa fa-robot"></i>
+		    </div>
+		    <div class="ml-2 bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-[80%]">
+		      <p class="text-gray-800">你好！我是AI助手，有什么可以帮助你的吗？</p>
+		    </div>
+		  `;
+		  messages.appendChild(initialMessage);
+		  
+		  // 输入区域
+		  const inputArea = document.createElement('div');
+		  inputArea.className = 'p-3 border-t border-gray-200 bg-white';
+		  
+		  const inputContainer = document.createElement('div');
+		  inputContainer.className = 'flex items-center space-x-2';
+		  
+		  const inputField = document.createElement('input');
+		  inputField.id = 'ai-input';
+		  inputField.type = 'text';
+		  inputField.placeholder = '输入问题...';
+		  inputField.className = 'flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none';
+		  
+		  const sendButton = document.createElement('button');
+		  sendButton.id = 'ai-send';
+		  sendButton.className = 'rounded-lg p-2 transition-colors';
+		  sendButton.style.backgroundColor = config.primaryColor;
+		  sendButton.style.color = 'white';
+		  sendButton.innerHTML = '<i class="fa fa-paper-plane"></i>';
+		  
+		  inputContainer.appendChild(inputField);
+		  inputContainer.appendChild(sendButton);
+		  inputArea.appendChild(inputContainer);
+		  
+		  // 组装对话框
+		  chatBox.appendChild(header);
+		  chatBox.appendChild(messages);
+		  chatBox.appendChild(inputArea);
+		  
+		  // 添加到容器
+		  container.appendChild(toggleButton);
+		  container.appendChild(chatBox);
+		  
+		  // 添加到文档
+		  document.body.appendChild(container);
+		  
+		  // 添加交互功能
+		  toggleButton.addEventListener('click', () => {
+		    if(chatBox.style.visibility === 'hidden') {
+		      chatBox.style.transform = config.position.includes('left') ? 'translateX(0)' : 'translateX(0)';
+		      chatBox.style.visibility = 'visible';
+		      chatBox.style.opacity = '1';
+		      toggleButton.style.transform = 'scale(0)';
+		    } else {
+		      chatBox.style.transform = config.position.includes('left') ? 'translateX(-100%)' : 'translateX(100%)';
+		      chatBox.style.visibility = 'hidden';
+		      chatBox.style.opacity = '0';
+		      toggleButton.style.transform = 'scale(1)';
+		    }
+		  });
+		  
+		  headerClose.addEventListener('click', () => {
+		    chatBox.style.transform = config.position.includes('left') ? 'translateX(-100%)' : 'translateX(100%)';
+		    chatBox.style.visibility = 'hidden';
+		    chatBox.style.opacity = '0';
+		    toggleButton.style.transform = 'scale(1)';
+		  });
+		  
+		  sendButton.addEventListener('click', () => sendMessage());
+		  inputField.addEventListener('keypress', (e) => {
+		    if(e.key === 'Enter') sendMessage();
+		  });
+		  
+		  // 发送消息函数
+		  function sendMessage() {
+		    const message = inputField.value.trim();
+		    if(!message) return;
+		    
+		    // 添加用户消息
+		    const userMessage = document.createElement('div');
+		    userMessage.className = 'flex items-start justify-end mb-4';
+		    userMessage.innerHTML = `
+		      <div class="mr-2 rounded-lg rounded-tr-none p-3 shadow-sm max-w-[80%]" style="background-color: ${config.primaryColor}; color: white">
+		        <p>${message}</p>
+		      </div>
+		      <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 flex-shrink-0">
+		        <i class="fa fa-user"></i>
+		      </div>
+		    `;
+		    messages.appendChild(userMessage);
+		    
+		    // 清空输入框
+		    inputField.value = '';
+		    
+		    // 滚动到底部
+		    messages.scrollTop = messages.scrollHeight;
+		    
+		    // 模拟AI回复
+		    setTimeout(() => {
+		      const aiResponse = document.createElement('div');
+		      aiResponse.className = 'flex items-start mb-4';
+		      aiResponse.innerHTML = `
+		        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0" style="background-color: ${config.primaryColor}">
+		          <i class="fa fa-robot"></i>
+		        </div>
+		        <div class="ml-2 bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-[80%]">
+		          <p class="text-gray-800">感谢你的提问！我是一个演示用的AI助手，目前还不能真正理解你的问题。这是一个示例回答。</p>
+		        </div>
+		      `;
+		      messages.appendChild(aiResponse);
+		      messages.scrollTop = messages.scrollHeight;
+		    }, 800);
+		  }
+		}
+		
+		// 初始化AI助手
+		document.addEventListener('DOMContentLoaded', () => {
+		  createAIWidget();
+		});
