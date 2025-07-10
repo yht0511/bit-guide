@@ -55,12 +55,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });    
 
 
-//添加一个AI助手
-    // AI助手配置
+	//添加一个AI助手
+		const githubRepoUrl = "https://github.com/yht0511/bit-guide/tree/main/docs"; // 固定仓库地址
+		const githubPagesUrl = "https://yht0511.github.io/bit-guide/"; //对应静态网站地址
+		const aiApiUrl = "https://ai.teclab.org.cn/v1/chat/completions"; 
+		const timeout = 50000; //回答超时
+			
+		// AI助手配置
 		const config = {
 		  position: 'bottom-right', // 位置：bottom-right, bottom-left, top-right, top-left
 		  primaryColor: '#165DFF',
-		  bubbleSize: '50', // 图标大小(px)
+		  bubbleSize: '16', // 图标大小(px)
 		  width: '380px',
 		  height: '480px'
 		};
@@ -267,20 +272,30 @@ document.addEventListener('DOMContentLoaded', () => {
 		    // 滚动到底部
 		    messages.scrollTop = messages.scrollHeight;
 		    
-		    // 模拟AI回复
-		    setTimeout(() => {
+		    // AI回复
+		    setTimeout(async() => {
 		      const aiResponse = document.createElement('div');
 		      aiResponse.className = 'flex items-start mb-4';
-		      aiResponse.innerHTML = `
-		        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0" style="background-color: ${config.primaryColor}">
-		          <i class="fa fa-robot"></i>
-		        </div>
-		        <div class="ml-2 bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-[80%]">
-		          <p class="text-gray-800">感谢你的提问！我是一个演示用的AI助手，目前还不能真正理解你的问题。这是一个示例回答。</p>
-		        </div>
-		      `;
-		      messages.appendChild(aiResponse);
-		      messages.scrollTop = messages.scrollHeight;
+			  aiResponse.innerHTML = `
+			    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0" style="background-color: ${config.primaryColor}">
+			      <i class="fa fa-robot"></i>
+			    </div>
+			    <div class="ml-2 bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-[80%]">
+			      <p class="text-gray-800">正在加载，请稍后</p>
+			    </div>
+			  `;
+			  messages.appendChild(aiResponse);
+			  messages.scrollTop = messages.scrollHeight;
+			  const result = await answerwithtimeout(()=> {return getAnswerWithLinks(message, githubRepoUrl)});
+			  aiResponse.innerHTML = `
+			    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0" style="background-color: ${config.primaryColor}">
+			      <i class="fa fa-robot"></i>
+			    </div>
+			    <div class="ml-2 bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-[80%]">
+			      <p class="text-gray-800">${result}</p>
+			    </div>
+			  `;
+			  
 		    }, 800);
 		  }
 		}
@@ -289,3 +304,83 @@ document.addEventListener('DOMContentLoaded', () => {
 		document.addEventListener('DOMContentLoaded', () => {
 		  createAIWidget();
 		});
+		
+		//设置回答超时函数
+		async function answerwithtimeout (asyncfunction) {
+			const timeoutPromise = new Promise((_, reject)=> {
+				setTimeout(()=> {
+					reject(new Error("运行超时"));
+				},timeout);
+			});
+			try {
+				const result = await Promise.race([asyncfunction(),timeoutPromise]);
+				return result;
+			} catch (error) {
+				return error;
+			}
+		}
+		
+		
+		
+		//AI接口对接
+		async function getAnswerWithLinks(userQuestion, githubRepoUrl) {
+		  
+		  try {
+		    const prompt = `请根据我的问题「${userQuestion}」，从GitHub项目「${githubRepoUrl}」中，检索相关的页面文件（如HTML、MD等），结合这些页面内容生成准确回答。回答末尾请附上所有引用的页面链接（格式：文件名 - 链接），链接需指向该页面在对应的静态网站「${githubPagesUrl}」上的位置。返回格式样例为 { answer: "回答内容", links: ["文件名 - 链接1", "文件名 - 链接2"] }，请严格遵守此格式；没找到的话就在回答内容写：暂时没有找到哦，可以向编写组提建议，我们会进一步完善指南`;
+		        
+		        // 调用OpenAI API
+		        const response = await fetch(aiApiUrl, {
+		          method: "POST",
+		          headers: {
+		            "Content-Type": "application/json"
+		          },
+		          body: JSON.stringify({
+		            model: "deepseek-r1",
+		            messages: [
+		              {
+		                role: "user",
+		                content: prompt
+		              }
+		            ],
+		            temperature: 0.2,
+		            max_tokens: 4000
+		          })
+		        });
+			
+			
+		    if (!response.ok) {
+		          const errorData = await response.json();
+		          console.error("API 错误:", errorData);
+		          throw new Error(`API 错误 (${response.status}): ${errorData.error.message}`);
+		    }
+		
+		    const aiResponse = await response.json();
+		    
+			const datacontent = aiResponse.choices[0]?.message?.content;
+			
+			const data = await JSON.parse(datacontent);
+		    // AI返回格式为 { answer: "回答内容", links: ["文件名 - 链接1", "文件名 - 链接2"] }
+		    if (!data.answer) {
+		      throw new Error("AI未返回有效回答");
+		    }
+		
+		    
+		    var displayContent = `<p>${data.answer}</p>`;
+		    if (data.links && data.links.length > 0) {
+		      displayContent += "<p><strong>相关页面：</strong></p><ul>";
+		      data.links.forEach(link => {
+		        // 简单处理链接格式
+		        const [fileName, url] = link.split(" - ");
+		        displayContent += `<li>${fileName} - <a href="${url}" target="_blank">查看</a></li>`;
+		      });
+		      displayContent += "</ul>";
+		    }
+			return displayContent;
+		
+		  } catch (error) {
+		    console.error("获取回答失败：", error);
+		    return `<p style="color: red;">出错了：${error.message}，请重试</p>`;
+		  }
+		}
+		
+		
