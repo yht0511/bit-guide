@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const githubRepoUrl = "https://github.com/yht0511/bit-guide/tree/main/docs";
 const githubPagesUrl = "https://yht0511.github.io/bit-guide/";
 const aiApiUrl = "https://ai.teclab.org.cn/v1/chat/completions"; 
+const wholeJsonUrl = "https://yht0511.github.io/bit-guide/whole.json"; // whole.json的URL
 const timeout = 50000;
 
 const config = {
@@ -328,10 +329,56 @@ async function answerwithtimeout(asyncfunction) {
 	}
 }
 
-// AI接口对接 - 流式版本 (支持思考过程)
+// 获取whole.json内容的函数
+let wholeJsonCache = null;
+async function getWholeJsonContent() {
+  if (wholeJsonCache) {
+    return wholeJsonCache;
+  }
+  
+  try {
+    const response = await fetch(wholeJsonUrl);
+    if (!response.ok) {
+      throw new Error(`获取whole.json失败: ${response.status}`);
+    }
+    const data = await response.json();
+    wholeJsonCache = data;
+    console.log(`✓ 已加载whole.json，包含${data.total_files}个文件`);
+    return data;
+  } catch (error) {
+    console.error("获取whole.json失败:", error);
+    throw error;
+  }
+}
+
+// AI接口对接 - 流式版本 (支持思考过程和whole.json内容)
 async function getAnswerWithLinksStreaming(userQuestion, githubRepoUrl, onChunk) {
   try {
-    const prompt = `请根据我的问题「${userQuestion}」，从网站「${githubPagesUrl}」中，检索相关的页面，结合这些页面内容生成准确回答。请使用markdown格式回答，并在回答末尾附上所有引用的页面链接（格式：[板块名](链接)），板块名翻译成中文，确保链接能够访问。回答的内容最好充实一些，但是一定要保证正确性；如果用户在进行其他互动而非询问问题，可以结合相关内容返回相应风格的互动；实在没找到内容的相关问题的话就在回答内容写：暂时没有找到哦，可以向编写组提建议，我们会进一步完善指南～(∠・ω< )⌒★`;
+    // 获取whole.json内容
+    const wholeJsonData = await getWholeJsonContent();
+    
+    // 构建包含所有文档内容的上下文
+    let documentContext = "以下是北理生活指南的所有文档内容：\n\n";
+    
+    Object.values(wholeJsonData.files).forEach(file => {
+      documentContext += `## 文档：${file.title || file.path}\n`;
+      documentContext += `链接：${file.url}\n`;
+      documentContext += `内容：\n${file.content}\n\n---\n\n`;
+    });
+    
+    const prompt = `你是北京理工大学生活指南的AI助手。基于以下完整的文档内容回答用户问题。
+
+${documentContext}
+
+用户问题：${userQuestion}
+
+请根据上述文档内容准确回答用户的问题。回答要求：
+1. 使用markdown格式
+2. 基于文档内容给出准确、详细的回答
+3. 在回答末尾列出相关的参考页面链接（格式：[页面标题](链接)）
+4. 如果问题涉及多个方面，请综合相关文档内容回答
+5. 如果文档中没有相关信息，请明确说明
+6. 保持友好和有帮助的语调`;
      
     // 调用OpenAI API - 流式
     const response = await fetch(aiApiUrl, {

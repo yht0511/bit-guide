@@ -26,4 +26,24 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mkdocs-material
+      
+      # 生成whole.json文件
+      - name: Generate whole.json
+        run: |
+          echo "正在生成whole.json文件..."
+          python generate_whole_json.py docs docs/whole.json
+          echo "whole.json文件生成完成"
+          
+      # 验证生成的文件
+      - name: Verify whole.json
+        run: |
+          if [ -f "docs/whole.json" ]; then
+            echo "✓ whole.json文件已生成"
+            echo "文件大小: $(du -h docs/whole.json | cut -f1)"
+            echo "文件数量: $(python -c "import json; data=json.load(open('docs/whole.json')); print(data['total_files'])")"
+          else
+            echo "✗ whole.json文件未找到"
+            exit 1
+          fi
+          
       - run: mkdocs gh-deploy --force
