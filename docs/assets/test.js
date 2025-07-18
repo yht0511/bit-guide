@@ -373,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		        // 简单处理链接格式
 		        const [fileName, url] = link.split(" - ");
 		        displayContent += `<li>${fileName} - <a href="${url}" target="_blank">查看</a></li>`;
-		        displayContent += `<li>${fileName}</li>`;
+		        //displayContent += `<li>${fileName}</li>`;
 			  });
 		      displayContent += "</ul>";
 		    }
