@@ -72,6 +72,14 @@ const config = {
 
 // 创建AI助手
 function createAIWidget() {
+  // 确保移动端视口设置正确
+  if (isMobileDevice() && !document.querySelector('meta[name="viewport"]')) {
+    const viewport = document.createElement('meta');
+    viewport.name = 'viewport';
+    viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    document.head.appendChild(viewport);
+  }
+
   // 创建图标按钮
   const toggleButton = document.createElement('button');
   toggleButton.id = 'ai-toggle';
@@ -172,7 +180,19 @@ function createAIWidget() {
       enterFullscreen();
     }
   });
+
+  // 检测是否为移动设备
+  function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+           window.innerWidth <= 768;
+  }
   
+  // 检测是否为移动设备
+  function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+           window.innerWidth <= 768;
+  }
+
   // 全屏功能
   function enterFullscreen() {
     isFullscreen = true;
@@ -180,6 +200,34 @@ function createAIWidget() {
     fullscreenButton.innerHTML = '<i class="fa fa-compress"></i>';
     fullscreenButton.title = '退出全屏';
     document.body.classList.add('ai-fullscreen-mode');
+    
+    // 移动端额外处理
+    if (isMobileDevice()) {
+      // 隐藏地址栏
+      setTimeout(() => {
+        window.scrollTo(0, 1);
+        window.scrollTo(0, 0);
+      }, 100);
+      
+      // 阻止页面滚动
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      
+      // 添加防止滚动的事件监听
+      const preventScroll = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      };
+      
+      document.addEventListener('touchmove', preventScroll, { passive: false });
+      document.addEventListener('scroll', preventScroll, { passive: false });
+      
+      // 存储监听器以便后续移除
+      chatBox._preventScroll = preventScroll;
+    }
   }
   
   function exitFullscreen() {
@@ -188,6 +236,21 @@ function createAIWidget() {
     fullscreenButton.innerHTML = '<i class="fa fa-expand"></i>';
     fullscreenButton.title = '全屏';
     document.body.classList.remove('ai-fullscreen-mode');
+    
+    // 移动端恢复
+    if (isMobileDevice()) {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+      
+      // 移除防止滚动的事件监听
+      if (chatBox._preventScroll) {
+        document.removeEventListener('touchmove', chatBox._preventScroll);
+        document.removeEventListener('scroll', chatBox._preventScroll);
+        delete chatBox._preventScroll;
+      }
+    }
   }
   
   // ESC键退出全屏
