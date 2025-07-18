@@ -60,7 +60,6 @@ const githubRepoUrl = "https://github.com/yht0511/bit-guide/tree/main/docs";
 const githubPagesUrl = "https://yht0511.github.io/bit-guide/";
 const aiApiUrl = "https://ai.teclab.org.cn/v1/chat/completions"; 
 const wholeJsonUrl = "https://yht0511.github.io/bit-guide/whole.json"; // whole.json的URL
-const mkdocsYmlUrl = "https://raw.githubusercontent.com/yht0511/bit-guide/main/mkdocs.yml"; // mkdocs.yml的原始URL
 const timeout = 50000;
 
 const config = {
@@ -352,120 +351,11 @@ async function getWholeJsonContent() {
   }
 }
 
-// 获取mkdocs.yml导航信息的函数
-let navigationCache = null;
-async function getNavigationInfo() {
-  if (navigationCache) {
-    return navigationCache;
-  }
-  
-  try {
-    const response = await fetch(mkdocsYmlUrl);
-    if (!response.ok) {
-      throw new Error(`获取mkdocs.yml失败: ${response.status}`);
-    }
-    const yamlText = await response.text();
-    
-    // 解析YAML中的nav部分
-    const navigation = parseNavigationFromYaml(yamlText);
-    navigationCache = navigation;
-    console.log(`✓ 已加载导航信息，包含${navigation.length}个主要分类`);
-    return navigation;
-  } catch (error) {
-    console.error("获取导航信息失败:", error);
-    throw error;
-  }
-}
-
-// 解析YAML文件中的导航信息
-function parseNavigationFromYaml(yamlText) {
-  const lines = yamlText.split('\n');
-  const navigation = [];
-  let inNavSection = false;
-  let currentSection = null;
-  let currentLevel = 0;
-  
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    
-    // 检测是否进入nav部分
-    if (line.trim() === 'nav:') {
-      inNavSection = true;
-      continue;
-    }
-    
-    // 如果不在nav部分，跳过
-    if (!inNavSection) continue;
-    
-    // 如果遇到下一个顶级配置项，退出nav解析
-    if (line.match(/^[a-zA-Z_]+:/) && !line.startsWith(' ')) {
-      break;
-    }
-    
-    // 跳过空行和注释
-    if (!line.trim() || line.trim().startsWith('#')) continue;
-    
-    // 计算缩进级别
-    const indent = line.search(/\S/);
-    if (indent === -1) continue;
-    
-    const level = Math.floor(indent / 2);
-    const content = line.trim();
-    
-    // 解析导航项
-    if (content.includes(':')) {
-      const parts = content.split(':');
-      const title = parts[0].trim().replace(/^-\s*/, '');
-      const path = parts[1] ? parts[1].trim() : null;
-      
-      if (level === 1) {
-        // 主分类
-        currentSection = {
-          title: title,
-          path: path,
-          url: path ? `${githubPagesUrl}${path.replace('.md', '/')}` : null,
-          children: []
-        };
-        navigation.push(currentSection);
-      } else if (level === 2 && currentSection) {
-        // 子页面
-        const childUrl = path ? `${githubPagesUrl}${path.replace('.md', '/')}` : null;
-        currentSection.children.push({
-          title: title,
-          path: path,
-          url: childUrl
-        });
-      }
-    }
-  }
-  
-  return navigation;
-}
-
 // AI接口对接 - 流式版本 (支持思考过程和whole.json内容)
 async function getAnswerWithLinksStreaming(userQuestion, githubRepoUrl, onChunk) {
   try {
-    // 获取whole.json内容和导航信息
-    const [wholeJsonData, navigationInfo] = await Promise.all([
-      getWholeJsonContent(),
-      getNavigationInfo()
-    ]);
-    
-    // 构建导航信息字符串
-    let navigationContext = "## 网站导航结构\n\n";
-    navigationInfo.forEach(section => {
-      navigationContext += `### ${section.title}\n`;
-      if (section.url) {
-        navigationContext += `主页链接：[${section.title}](${section.url})\n`;
-      }
-      if (section.children && section.children.length > 0) {
-        navigationContext += "子页面：\n";
-        section.children.forEach(child => {
-          navigationContext += `- [${child.title}](${child.url})\n`;
-        });
-      }
-      navigationContext += "\n";
-    });
+    // 获取whole.json内容
+    const wholeJsonData = await getWholeJsonContent();
     
     // 构建包含所有文档内容的上下文
     let documentContext = "以下是北理生活指南的所有文档内容：\n\n";
@@ -476,22 +366,19 @@ async function getAnswerWithLinksStreaming(userQuestion, githubRepoUrl, onChunk)
       documentContext += `内容：\n${file.content}\n\n---\n\n`;
     });
     
-    const prompt = `你是北京理工大学生活指南的AI助手。基于以下完整的文档内容和网站导航信息回答用户问题。(注意:提供给用户的链接都应该属于导航结构中的链接)
-
-${navigationContext}
+    const prompt = `你是北京理工大学生活指南的AI助手。基于以下完整的文档内容回答用户问题。
 
 ${documentContext}
 
 用户问题：${userQuestion}
 
-请根据上述文档内容和导航信息准确回答用户的问题。回答要求：
+请根据上述文档内容准确回答用户的问题。回答要求：
 1. 使用markdown格式
 2. 基于文档内容给出准确、详细的回答
-3. 在回答末尾列出相关的参考页面链接，使用导航结构中的正确链接格式
+3. 在回答末尾列出相关的参考页面链接（格式：[页面标题](链接)）
 4. 如果问题涉及多个方面，请综合相关文档内容回答
-5. 如果文档中没有相关信息，请明确说明，并建议用户查看相关导航分类
-6. 保持友好和有帮助的语调
-7. 当提供链接时，优先使用导航结构中定义的链接格式`;
+5. 如果文档中没有相关信息，请明确说明
+6. 保持友好和有帮助的语调`;
     
 
     // 调用OpenAI API - 流式

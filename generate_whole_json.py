@@ -8,15 +8,14 @@ import os
 import json
 import re
 from pathlib import Path
-from urllib.parse import quote
 
 def generate_github_pages_url(file_path, base_url="https://yht0511.github.io/bit-guide/"):
     """
     生成GitHub Pages的访问链接
     """
     # 移除docs/前缀，转换为相对路径
-    relative_path = file_path.replace('docs/', '', 1)
-
+    relative_path = file_path.replace('docs/', '', 1).replace('docs\\', '', 1).replace('.md', '')
+    relative_path = relative_path.removesuffix('.md').removesuffix('/').removesuffix('\\')
     return base_url + relative_path
 
 def extract_title_from_content(content):
@@ -54,8 +53,8 @@ def process_markdown_files(docs_dir="docs"):
             # 获取相对于docs的路径
             relative_path = str(md_file.relative_to(docs_path.parent))
             
-            # 生成GitHub Pages链接
-            github_pages_url = generate_github_pages_url(relative_path)
+            # 从导航映射中获取URL
+            url = generate_github_pages_url(relative_path)
             
             # 提取标题
             title = extract_title_from_content(content)
@@ -64,32 +63,33 @@ def process_markdown_files(docs_dir="docs"):
             file_info = {
                 "title": title,
                 "path": relative_path,
-                # "url": github_pages_url,
+                "url": url,
                 "content": content
             }
             
             # 使用相对路径作为key
             result[relative_path] = file_info
             
-            print(f"✓ 处理文件: {relative_path}")
+            print(f"✓ 处理文件: {relative_path} -> {url}")
             
         except Exception as e:
             print(f"✗ 处理文件失败 {md_file}: {e}")
     
     return result
 
-def generate_whole_json(output_file="whole.json", docs_dir="docs"):
+def generate_whole_json(output_file="whole.json", docs_dir="docs", mkdocs_file="mkdocs.yml"):
     """
     生成whole.json文件
     """
     print("开始聚合markdown文件...")
+
     
     # 处理所有markdown文件
     files_data = process_markdown_files(docs_dir)
     
     # 创建最终的JSON结构
     whole_data = {
-        "generated_at": "",  # 将由GitHub Actions填充时间戳
+        "generated_at": "",  # 将由脚本填充时间戳
         "repository": "yht0511/bit-guide",
         "base_url": "https://yht0511.github.io/bit-guide/",
         "total_files": len(files_data),
