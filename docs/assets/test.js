@@ -384,7 +384,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		    return `<p style="color: red;">出错了：${error.message}，请重试</p>`;
 		  }
 		}
-		
+
+
+document.addEventListener('DOMContentLoaded', function() {
+
+
 		//动态加载link字体
 		function loadNunitoFont() {
 		            const link = document.createElement('link');
@@ -592,5 +596,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 })();
 
 
-		
+	
+}
 		 
