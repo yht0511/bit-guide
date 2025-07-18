@@ -283,23 +283,13 @@ function createAIWidget() {
                 thinkingContent.scrollTop = thinkingContent.scrollHeight;
                 messages.scrollTop = messages.scrollHeight;
               } else if (data.type === 'content') {
-                if (typeof marked !== 'undefined') {
-                  const html = marked.parse(data.content);
-                  contentDiv.innerHTML = html;
-                } else {
-                  const simpleHtml = data.content
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
-                    .replace(/\n/g, '<br>');
-                  contentDiv.innerHTML = simpleHtml;
-                }
+                renderMarkdownContent(data.content, contentDiv);
                 messages.scrollTop = messages.scrollHeight;
               }
             } catch (error) {
               console.warn('渲染内容失败:', error);
               if (data.type === 'content') {
-                contentDiv.innerHTML = data.content.replace(/\n/g, '<br>');
+                renderMarkdownContent(data.content, contentDiv);
               }
             }
           });
@@ -327,6 +317,69 @@ async function answerwithtimeout(asyncfunction) {
 		console.error("函数执行出错:", error);
 		throw error;
 	}
+}
+
+// 配置和渲染Markdown内容的函数
+function renderMarkdownContent(content, targetElement) {
+  if (typeof marked === 'undefined') {
+    console.error('Marked库未加载，使用纯文本显示');
+    targetElement.innerHTML = content.replace(/\n/g, '<br>');
+    return;
+  }
+
+  try {
+    // 配置marked选项
+    marked.setOptions({
+      gfm: true,           // 启用GitHub风格Markdown
+      breaks: true,        // 支持换行
+      sanitize: false,     // 允许HTML（小心XSS）
+      smartLists: true,    // 智能列表
+      smartypants: true,   // 智能标点
+      tables: true,        // 启用表格支持
+      headerIds: true,     // 自动生成标题ID
+      mangle: false        // 不要混淆邮件地址
+    });
+
+    // 配置代码高亮（如果highlight.js可用）
+    if (typeof hljs !== 'undefined') {
+      marked.setOptions({
+        highlight: function(code, lang) {
+          if (lang && hljs.getLanguage(lang)) {
+            try {
+              return hljs.highlight(code, { language: lang }).value;
+            } catch (err) {
+              console.warn('代码高亮失败:', err);
+            }
+          }
+          return hljs.highlightAuto(code).value;
+        }
+      });
+    }
+
+    // 渲染markdown
+    const html = marked.parse(content);
+    targetElement.innerHTML = html;
+
+    // 初始化代码高亮（如果还没有高亮）
+    if (typeof hljs !== 'undefined') {
+      targetElement.querySelectorAll('pre code').forEach((block) => {
+        if (!block.classList.contains('hljs')) {
+          hljs.highlightElement(block);
+        }
+      });
+    }
+
+    // 为外部链接添加target="_blank"
+    targetElement.querySelectorAll('a[href^="http"]').forEach(link => {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
+
+  } catch (error) {
+    console.error('Markdown渲染失败:', error);
+    // 降级到纯文本
+    targetElement.innerHTML = content.replace(/\n/g, '<br>');
+  }
 }
 
 // 获取whole.json内容的函数
@@ -490,22 +543,6 @@ ${documentContext}
     createAIWidget();
   }
 })();
-		
-		//设置回答超时函数 - 优化版
-		async function answerwithtimeout(asyncfunction) {
-			const timeoutPromise = new Promise((_, reject) => {
-				setTimeout(() => {
-					reject(new Error("运行超时"));
-				}, timeout);
-			});
-			try {
-				const result = await Promise.race([asyncfunction(), timeoutPromise]);
-				return result;
-			} catch (error) {
-				console.error("函数执行出错:", error);
-				throw error;
-			}
-		}
 		
 		//动态加载link字体
 		function loadNunitoFont() {

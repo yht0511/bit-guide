@@ -121,6 +121,7 @@ extra_css:
   - assets/extra.css
   - assets/test.css
   - https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css
   
 
 extra_javascript:
@@ -129,7 +130,9 @@ extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.10.4/polyfill.min.js
   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js
   - https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js
-  - https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js
+  - https://cdn.jsdelivr.net/npm/marked-highlight@2.0.6/lib/index.umd.js
 
 # Page navigation
 nav:
