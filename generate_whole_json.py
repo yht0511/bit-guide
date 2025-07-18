@@ -64,7 +64,7 @@ def process_markdown_files(docs_dir="docs"):
             file_info = {
                 "title": title,
                 "path": relative_path,
-                "url": github_pages_url,
+                # "url": github_pages_url,
                 "content": content
             }
             
