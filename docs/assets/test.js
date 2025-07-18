@@ -54,8 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });    
 
+		//添加一个AI助手
 
-	//添加一个AI助手
 		const githubRepoUrl = "https://github.com/yht0511/bit-guide/tree/main/docs"; // 固定仓库地址
 		const githubPagesUrl = "https://yht0511.github.io/bit-guide/"; //对应静态网站地址
 		const aiApiUrl = "https://ai.teclab.org.cn/v1/chat/completions"; 
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const config = {
 		  position: 'bottom-right', // 位置：bottom-right, bottom-left, top-right, top-left
 		  primaryColor: '#165DFF',
-		  bubbleSize: '60', // 图标大小(px)
+		  bubbleSize: '50', // 图标大小(px)
 		  width: '380px',
 		  height: '480px'
 		};
@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		  container.id = 'ai-widget-container';
 		  container.style.position = 'fixed';
 		  container.style.zIndex = '9999';
+		  container.setAttribute('name','TEST');
 		  
 		  // 设置位置
 		  switch(config.position) {
@@ -180,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		      <i class="fa fa-robot"></i>
 		    </div>
 		    <div class="ml-2 bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-[80%]">
-		      <p class="text-gray-800">你好！我是AI助手，有什么可以帮助你的吗？</p>
+		      <p class="text-gray-800">你好！我是AI助手，关于文档里的问题可以问我，我会尽力回答。有什么可以帮助你的吗？</p>
 		    </div>
 		  `;
 		  messages.appendChild(initialMessage);
@@ -258,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		    userMessage.className = 'flex items-start justify-end mb-4';
 		    userMessage.innerHTML = `
 		      <div class="mr-2 rounded-lg rounded-tr-none p-3 shadow-sm max-w-[80%]" style="background-color: ${config.primaryColor}; color: white">
-		        <p>${message}</p>
+		        <p style="color: hotpink;">${message}</p>
 		      </div>
 		      <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 flex-shrink-0">
 		        <i class="fa fa-user"></i>
@@ -281,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			      <i class="fa fa-robot"></i>
 			    </div>
 			    <div class="ml-2 bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-[80%]">
-			      <p class="text-gray-800">正在加载，请稍后</p>
+			      <p>正在加载，请稍后</p>
 			    </div>
 			  `;
 			  messages.appendChild(aiResponse);
@@ -291,8 +292,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white flex-shrink-0" style="background-color: ${config.primaryColor}">
 			      <i class="fa fa-robot"></i>
 			    </div>
-			    <div class="ml-2 bg-white rounded-lg rounded-tl-none p-3 shadow-sm max-w-[80%]">
-			      <p class="text-gray-800">${result}</p>
+			    <div>
+			      ${result}
 			    </div>
 			  `;
 			  
@@ -326,8 +327,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		async function getAnswerWithLinks(userQuestion, githubRepoUrl) {
 		  
 		  try {
-		    const prompt = `请根据我的问题「${userQuestion}」，从GitHub项目「${githubRepoUrl}」中，检索相关的页面文件（如HTML、MD等），结合这些页面内容生成准确回答。回答末尾请附上所有引用的页面链接（格式：文件名 - 链接），链接需指向该页面在对应的静态网站「${githubPagesUrl}」上的位置。返回格式样例为 { answer: "回答内容", links: ["文件名 - 链接1", "文件名 - 链接2"] }，请严格遵守此格式；没找到的话就在回答内容写：暂时没有找到哦，可以向编写组提建议，我们会进一步完善指南`;
-		        
+		    const prompt = `请根据我的问题「${userQuestion}」，从网站「${githubPagesUrl}」中，检索相关的页面，结合这些页面内容生成准确回答。回答末尾请附上所有引用的页面链接（格式：板块名 - 链接），板块名翻译成中文，确保链接能够访问，返回格式是 { "answer": "回答内容", "links": ["板块名 - 链接1", "板块名 - 链接2"] }，请严格遵守此格式，不要添加任何其他东西（当然可以多几个板块）；回答的内容最好充实一些,但是一定要保证正确性；如果用户在进行其他互动而非询问问题，可以结合相关内容返回相应风格的互动；实在没找到内容的相关问题的话就在回答内容写：暂时没有找到哦，可以向编写组提建议，我们会进一步完善指南～(∠・ω< )⌒★`;
+		       
 		        // 调用OpenAI API
 		        const response = await fetch(aiApiUrl, {
 		          method: "POST",
@@ -355,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		    }
 		
 		    const aiResponse = await response.json();
-		    
+		
 			const datacontent = aiResponse.choices[0]?.message?.content;
 			
 			const data = await JSON.parse(datacontent);
@@ -367,12 +368,13 @@ document.addEventListener('DOMContentLoaded', () => {
 		    
 		    var displayContent = `<p>${data.answer}</p>`;
 		    if (data.links && data.links.length > 0) {
-		      displayContent += "<p><strong>相关页面：</strong></p><ul>";
+		      displayContent += "<p><strong>参考板块：</strong></p><ul>";
 		      data.links.forEach(link => {
 		        // 简单处理链接格式
 		        const [fileName, url] = link.split(" - ");
 		        displayContent += `<li>${fileName} - <a href="${url}" target="_blank">查看</a></li>`;
-		      });
+		        displayContent += `<li>${fileName}</li>`;
+			  });
 		      displayContent += "</ul>";
 		    }
 			return displayContent;
@@ -383,4 +385,212 @@ document.addEventListener('DOMContentLoaded', () => {
 		  }
 		}
 		
+		//动态加载link字体
+		function loadNunitoFont() {
+		            const link = document.createElement('link');
+		            link.href = 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap';
+		            link.rel = 'stylesheet';
+		            link.type = 'text/css';
+		            
+		            // 字体加载完成后的回调
+		            link.onload = function() {
+		                console.log('Nunito字体加载完成');
+		            };
+		            
+		            link.onerror = function() {
+		                console.error('Nunito字体加载失败');
+		            };
+		            
+		            document.head.appendChild(link);
+		        }
 		
+		
+		//样式
+        const cssContent = `
+		/* 基础样式 */
+		            h1 { 
+		                color: #ff6b8b; 
+		                font-size: 1.8rem;
+		                font-weight: 700;
+		                border-bottom: 3px dotted #ffccd5; 
+		                padding-bottom: 10px;
+		                margin-bottom: 15px;
+		                text-shadow: 1px 1px 2px rgba(255,107,139,0.2);
+		            }
+		            
+		            h2 { 
+		                color: #a675e3; 
+		                font-size: 1.4rem;
+		                margin: 15px 0 10px;
+		                border-left: 4px solid #e8d4ff;
+		                padding-left: 10px;
+		            }
+		            
+		            p { 
+		                color: #6d5dae; 
+		                line-height: 1.7;
+		                margin: 10px 0;
+		                font-size: 1rem;
+		            }
+		            
+		            /* 文本样式 */
+		            strong { 
+		                color: #ff5e7d; 
+		                font-weight: 700;
+		                background: linear-gradient(transparent 60%, #ffebf0 60%);
+		                padding: 0 3px;
+		            }
+		            
+		            em { 
+		                color: #6ba5d7; 
+		                font-style: italic;
+		            }
+		            
+		            /* 列表样式 */
+		            ul { 
+		                list-style-type: none;
+		                margin: 15px 0;
+		                padding-left: 20px;
+		            }
+		            
+		            ul li { 
+		                margin: 8px 0;
+		                position: relative;
+		                padding-left: 25px;
+		                color: #6d5dae;
+		            }
+		            
+		            ul li:before {
+		                content: "•";
+		                color: #ff6b8b;
+		                font-size: 1.5rem;
+		                position: absolute;
+		                left: 0;
+		                top: -5px;
+		            }
+		            
+		            /* 代码样式 */
+		            code { 
+		                background: #fff0f5; 
+		                padding: 2px 8px; 
+		                border-radius: 8px;
+		                color: #a259ff;
+		                font-size: 0.9rem;
+		            }
+		            
+		            pre { 
+		                background: #fff0f5; 
+		                padding: 15px; 
+		                border-radius: 12px; 
+		                overflow-x: auto;
+		                border: 1px solid #ffddee;
+		                margin: 15px 0;
+		                box-shadow: 0 2px 5px rgba(255,221,238,0.5);
+		            }
+		            
+		            /* 引用样式 */
+		            blockquote { 
+		                border-left: 4px solid #b6e388;
+		                padding: 10px 15px;
+		                margin: 15px 0;
+		                color: #5a8b37;
+		                background-color: #f7ffe6;
+		                border-radius: 0 10px 10px 0;
+		                font-style: italic;
+		            }
+		            
+		            /* 链接样式 */
+		            a { 
+		                color: #4dabf7;
+		                text-decoration: none;
+		                position: relative;
+		                padding-bottom: 2px;
+		            }
+		            
+		            a:after {
+		                content: "";
+		                position: absolute;
+		                bottom: 0;
+		                left: 0;
+		                width: 100%;
+		                height: 2px;
+		                background-color: #4dabf7;
+		                transform: scaleX(0);
+		                transform-origin: bottom right;
+		                transition: transform 0.3s ease-out;
+		            }
+		            
+		            a:hover:after {
+		                transform: scaleX(1);
+		                transform-origin: bottom left;
+		            }
+        `;
+
+        //
+        const scopeSelector = '[name="TEST"]';
+
+        // 处理CSS，限制在name=TEST的元素内
+        function scopeCSS(css, scope) {
+            return css.split('}').map(rule => {
+                rule = rule.trim();
+                if (!rule) return '';
+                
+                const [selectors, styles] = rule.split('{');
+                if (!selectors || !styles) return rule + '}';
+                
+                const scopedSelectors = selectors.split(',').map(selector => {
+                    selector = selector.trim();
+                    if (selector === '*' || selector.includes(scope) || selector.startsWith('@')) {
+                        return selector;
+                    }
+                    return `${scope} ${selector}`;
+                }).join(', ');
+                
+                return `${scopedSelectors} { ${styles} }`;
+            }).join('\n');
+        }
+
+        //动态加载样式
+        function loadScopedCSS(scope, css) {
+            const style = document.createElement('style');
+            style.textContent = scopeCSS(css, scope);
+            document.head.appendChild(style);
+        }
+
+        //为每个name=TEST的div渲染对应的内容
+        function renderAllTestDivs() {
+            // 获取所有name=TEST的div
+            const testDivs = document.querySelectorAll(scopeSelector);
+            
+            testDivs.forEach((div, index) => {
+                
+                const content = div.innerHTML;
+                
+                
+                div.innerHTML = marked.parse(content);
+                
+                
+                div.style.margin = '20px';
+                div.style.padding = '15px';
+                div.style.border = '1px solid #eee';
+                div.style.borderRadius = '8px';
+				// 应用Nunito字体
+				div.style.fontFamily = "'Nunito', 'Comic Sans MS', sans-serif";
+            });
+        }
+
+        // 初始化：先加载字体，再加载样式，最后渲染内容
+                (function init() {
+                    // 先加载字体
+                    loadNunitoFont();
+                    
+                    // 等待字体加载完成后再继续（给浏览器一点时间）
+                    setTimeout(() => {
+                        loadScopedCSS(scopeSelector, cssContent);
+                        renderAllTestDivs();
+                    }, 100);
+                })();
+
+
+		
+		 
