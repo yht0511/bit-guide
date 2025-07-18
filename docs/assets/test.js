@@ -472,11 +472,11 @@ async function getAnswerWithLinksStreaming(userQuestion, githubRepoUrl, onChunk)
     
     Object.values(wholeJsonData.files).forEach(file => {
       documentContext += `## 文档：${file.title || file.path}\n`;
-      documentContext += `链接：${file.url}\n`;
+      if(file.url) documentContext += `链接：${file.url}\n`;
       documentContext += `内容：\n${file.content}\n\n---\n\n`;
     });
     
-    const prompt = `你是北京理工大学生活指南的AI助手。基于以下完整的文档内容和网站导航信息回答用户问题。
+    const prompt = `你是北京理工大学生活指南的AI助手。基于以下完整的文档内容和网站导航信息回答用户问题。(注意:提供给用户的链接都应该属于导航结构中的链接)
 
 ${navigationContext}
 
