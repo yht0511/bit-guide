@@ -110,6 +110,54 @@
   opacity: 1 !important;
 }
 
+/* 全屏模式样式 */
+.ai-chat-fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+  transform: none !important;
+  z-index: 99999 !important;
+  box-shadow: none !important;
+}
+
+.ai-fullscreen-mode {
+  overflow: hidden;
+}
+
+/* 全屏模式下的消息区域调整 */
+.ai-chat-fullscreen .ai-messages {
+  padding: 20px 40px;
+}
+
+.ai-chat-fullscreen .ai-message-content {
+  max-width: 90%;
+  font-size: 16px;
+}
+
+.ai-chat-fullscreen .ai-message-content p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* 全屏模式下的输入区域调整 */
+.ai-chat-fullscreen .ai-input-area {
+  padding: 20px 40px;
+}
+
+.ai-chat-fullscreen .ai-input {
+  padding: 12px 16px;
+  font-size: 16px;
+}
+
+.ai-chat-fullscreen .ai-send {
+  padding: 12px 16px;
+}
+
 /* AI对话框头部 */
 .ai-header {
   padding: 16px;
@@ -134,12 +182,31 @@
   margin: 0 0 0 8px;
 }
 
-.ai-close {
+.ai-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-close, .ai-fullscreen {
   background: none;
   border: none;
   color: white;
   cursor: pointer;
-  padding: 4px;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-close:hover, .ai-fullscreen:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.ai-fullscreen i, .ai-close i {
+  font-size: 14px;
 }
 
 /* 消息区域 */
@@ -381,5 +448,22 @@
   .ai-chat {
     width: calc(100vw - 48px) !important;
     height: calc(100vh - 160px) !important;
+  }
+  
+  /* 移动端全屏模式调整 */
+  .ai-chat-fullscreen .ai-messages {
+    padding: 16px 20px;
+  }
+  
+  .ai-chat-fullscreen .ai-input-area {
+    padding: 16px 20px;
+  }
+  
+  .ai-header-left h3 {
+    font-size: 16px;
+  }
+  
+  .ai-fullscreen i, .ai-close i {
+    font-size: 16px;
   }
 }

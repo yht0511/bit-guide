@@ -95,9 +95,14 @@ function createAIWidget() {
       <i class="fa fa-robot"></i>
       <h3>AI助手</h3>
     </div>
-    <button id="ai-close" class="ai-close">
-      <i class="fa fa-times"></i>
-    </button>
+    <div class="ai-header-right">
+      <button id="ai-fullscreen" class="ai-fullscreen" title="全屏">
+        <i class="fa fa-expand"></i>
+      </button>
+      <button id="ai-close" class="ai-close" title="关闭">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
   `;
   
   // 消息区域
@@ -142,6 +147,9 @@ function createAIWidget() {
   const inputField = document.getElementById('ai-input');
   const sendButton = document.getElementById('ai-send');
   const closeButton = document.getElementById('ai-close');
+  const fullscreenButton = document.getElementById('ai-fullscreen');
+  
+  let isFullscreen = false;
   
   toggleButton.addEventListener('click', () => {
     chatBox.classList.toggle('ai-chat-visible');
@@ -149,8 +157,43 @@ function createAIWidget() {
   });
   
   closeButton.addEventListener('click', () => {
+    if (isFullscreen) {
+      exitFullscreen();
+    }
     chatBox.classList.remove('ai-chat-visible');
     toggleButton.classList.remove('ai-toggle-hidden');
+  });
+  
+  fullscreenButton.addEventListener('click', () => {
+    if (isFullscreen) {
+      exitFullscreen();
+    } else {
+      enterFullscreen();
+    }
+  });
+  
+  // 全屏功能
+  function enterFullscreen() {
+    isFullscreen = true;
+    chatBox.classList.add('ai-chat-fullscreen');
+    fullscreenButton.innerHTML = '<i class="fa fa-compress"></i>';
+    fullscreenButton.title = '退出全屏';
+    document.body.classList.add('ai-fullscreen-mode');
+  }
+  
+  function exitFullscreen() {
+    isFullscreen = false;
+    chatBox.classList.remove('ai-chat-fullscreen');
+    fullscreenButton.innerHTML = '<i class="fa fa-expand"></i>';
+    fullscreenButton.title = '全屏';
+    document.body.classList.remove('ai-fullscreen-mode');
+  }
+  
+  // ESC键退出全屏
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isFullscreen) {
+      exitFullscreen();
+    }
   });
   
   sendButton.addEventListener('click', () => sendMessage());
