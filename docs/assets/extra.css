@@ -163,3 +163,22 @@
   font-size: 0.8rem;
   padding: 0.2rem 0.6rem;
 }
+
+/* 小碎花动画样式 */
+.flower {
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+@keyframes explode {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--end-x), var(--end-y)) scale(0.3) rotate(var(--rotate));
+    opacity: 0;
+  }
+}

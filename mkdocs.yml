@@ -119,20 +119,20 @@ extra:
 
 extra_css:
   - assets/extra.css
-  - assets/test.css
+  - assets/ai.css
   - https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.min.css
   - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css
   
 
 extra_javascript:
   - assets/extra.js
-  - assets/test.js
-  - https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.10.4/polyfill.min.js
-  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js
-  - https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js
-  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
-  - https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js
-  - https://cdn.jsdelivr.net/npm/marked-highlight@2.0.6/lib/index.umd.js
+  - assets/ai.js
+  - https://cdn.staticfile.org/babel-polyfill/7.12.1/polyfill.min.js
+  - https://cdn.staticfile.org/mathjax/3.2.0/es5/tex-mml-chtml.js
+  - https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.js
+  - https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js
+  - https://cdn.staticfile.org/marked/9.1.6/marked.min.js
+  - https://cdn.bootcdn.net/ajax/libs/marked-highlight/2.0.6/index.umd.min.js
 
 # Page navigation
 nav:
