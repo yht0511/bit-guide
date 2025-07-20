@@ -1,7 +1,7 @@
 // AI助手配置
 const githubRepoUrl = "https://github.com/yht0511/bit-guide/tree/main/docs";
 const githubPagesUrl = "https://yht0511.github.io/bit-guide/";
-const aiApiUrl ="http://101.200.185.84:8000/v1/chat/completions"; 
+const aiApiUrl ="https://ai.teclab.org.cn/v1/chat/completions"; 
 const wholeJsonUrl = "https://yht0511.github.io/bit-guide/whole.json"; // whole.json的URL
 const timeout = 50000;
 
