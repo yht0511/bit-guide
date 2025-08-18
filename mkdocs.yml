@@ -132,41 +132,35 @@ extra_javascript:
   - https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js
   - https://cdn.staticfile.org/marked/9.1.6/marked.min.js
   - https://cdn.bootcdn.net/ajax/libs/marked-highlight/2.0.6/index.umd.min.js
+  - https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js
 
 # Page navigation
 nav:
   - 首页: index.md
   - 🏫 校园生活:
       - 学校概况: school/overview.md
-      - 校区分布:
-          - 校区介绍: school/campus.md
-          - 良乡校区: school/liangxiang.md
-      - 生活服务:
-          - 食堂美食: school/dining.md
-          - 宿舍环境: school/dormitory.md
-          - 其他设施: school/facilities.md
-      - 教学相关:
-          - 教学设施: school/buildings.md
-          - 书院学院: school/colleges.md
-      - 校园文化:
-          - 趣味梗点: school/memes.md
-          - 北理黑话: school/slang.md
+      - 校区介绍: school/campus.md
+      - 良乡校区: school/liangxiang.md
+      - 食堂美食: school/dining.md
+      - 宿舍环境: school/dormitory.md
+      - 其他设施: school/facilities.md
+      - 教学设施: school/buildings.md
+      - 书院学院: school/colleges.md
+      - 趣味梗点: school/memes.md
+      - 北理黑话: school/slang.md
   - 🎭 活动社团:
       - 校园活动: activities/events.md
       - 学生组织: activities/organizations.md
       - 学生社团: activities/clubs.md
   - 📚 学习竞赛:
       - 奖项标准: study/awards.md
-      - 竞赛指南:
-          - 竞赛比赛综述: study/competitions.md
-          - 程序设计入门指北: study/xcpc_guide.md
+      - 竞赛比赛综述: study/competitions.md
+      - 程序设计入门指北: study/xcpc_guide.md
   - 📋 附录:
-      - 新生必备:
-          - 入学准备: appendix/preparation.md
-          - 周边设施: appendix/surroundings.md
-      - 参考资料:
-          - 重要图片: appendix/images.md
-          - 老乡群号: appendix/groups.md
+      - 入学准备: appendix/preparation.md
+      - 周边设施: appendix/surroundings.md
+      - 重要图片: appendix/images.md
+      - 老乡群号: appendix/groups.md
       - 致谢信息: appendix/thanks.md
 
 # Copyright
