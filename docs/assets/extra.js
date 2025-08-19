@@ -38,7 +38,7 @@ window.MathJax = {
 };
 
 //mermaid解析
-mermaid.initialize({ startOnLoad: true });
+// mermaid.initialize({ startOnLoad: true });
 
 // 自定义JavaScript功能
 
