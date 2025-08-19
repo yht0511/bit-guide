@@ -94,6 +94,11 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid-experimental
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 # Plugins
 plugins:
@@ -132,7 +137,6 @@ extra_javascript:
   - https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js
   - https://cdn.staticfile.org/marked/9.1.6/marked.min.js
   - https://cdn.bootcdn.net/ajax/libs/marked-highlight/2.0.6/index.umd.min.js
-  - https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js
 
 # Page navigation
 nav:
