@@ -106,6 +106,7 @@ plugins:
       lang: zh
   - tags:
       tags_file: tags.md
+  - mermaid2
 
 # Customization
 extra:
