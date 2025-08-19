@@ -97,8 +97,8 @@ markdown_extensions:
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
-          class: mermaid-experimental
-          format: !!python/name:pymdownx.superfences.fence_code_format
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
 
 # Plugins
 plugins:
