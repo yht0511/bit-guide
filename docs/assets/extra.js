@@ -231,13 +231,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const y = e.clientY;
 
     // 生成多个小碎花向四周炸开
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 6; i++) {
       // 随机选择一种花朵样式
       const randomFlower =
         flowerSVGs[Math.floor(Math.random() * flowerSVGs.length)];
 
       // 计算爆炸方向和距离
-      const angle = (i / 8) * Math.PI * 2;
+      const angle = (i / 6) * Math.PI * 2;
       const distance = 40 + Math.random() * 40;
       const endX = Math.cos(angle) * distance;
       const endY = Math.sin(angle) * distance;
